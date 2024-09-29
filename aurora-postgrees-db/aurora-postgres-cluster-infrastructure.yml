@@ -1,0 +1,37 @@
+---
+## 
+## Creates the VPC for DB Cluster
+##
+## Changelog:
+##
+## Dependencies:
+## none
+##
+## This sample code is made available under the MIT-0 license. See the LICENSE file.
+
+AWSTemplateFormatVersion: 2010-09-09
+Description: Creates the VPC for creating Aurora cluster
+
+## Parameters
+Parameters:
+  TemplateName:
+    Type: String
+    Default: rds  -aurora
+    Description: This name is used for different created resources.
+
+
+## Resources
+Resources:
+## The VPC
+  MainVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      InstanceTenancy: default
+      # VPC requires a CIDR block assigned to it, which defines the address space of the resources hosted in the network. 
+      CidrBlock: 10.0.0.0/16
+      Tags:
+        - Key: Name
+          Value:  !Sub ${TemplateName}-vpc
+
