@@ -47,7 +47,7 @@ Resources:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref MainVPC
-      AvailabilityZone: "eu-west-1"
+      AvailabilityZone: "eu-west-1a"
       CidrBlock: 10.0.10.0/24
       MapPublicIpOnLaunch: true
       Tags:
@@ -57,7 +57,7 @@ Resources:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref MainVPC
-      AvailabilityZone: "eu-west-2"
+      AvailabilityZone: "eu-west-1b"
       CidrBlock: 10.0.20.0/24
       MapPublicIpOnLaunch: true
       Tags:
@@ -69,7 +69,7 @@ Resources:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref MainVPC
-      AvailabilityZone: "eu-west-1"
+      AvailabilityZone: "eu-west-1a"
       CidrBlock: 10.0.30.0/24
       Tags:
         - Key: Name
@@ -78,7 +78,7 @@ Resources:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref MainVPC
-      AvailabilityZone: "eu-west-2"
+      AvailabilityZone: "eu-west-1b"
       CidrBlock: 10.0.40.0/24
       Tags:
         - Key: Name

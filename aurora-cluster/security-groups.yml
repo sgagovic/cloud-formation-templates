@@ -1,0 +1,90 @@
+---
+##
+## Sets up the security group used for the RDS instances
+##
+
+AWSTemplateFormatVersion: 2010-09-09
+Description: Security group for the Aurora cluster
+
+## Parameters
+Parameters:
+    TemplateName:
+        Type: String
+        Default: rdsa-security-group
+        Description: Name used for different elements created
+
+    # This is the VPC Id for the RDS VPC created earlier
+    RdsAuroraVPC:
+        Type: AWS::EC2::VPC::Id
+        Description: Main VPC id
+
+    # This is the ingress port for the cluster
+    RdsIngressPort:
+        Type: Number
+        AllowedValues: [3306, 5432]
+        Default: 5432
+        Description: This is the Listener port (3306 for MySQL and 5432 for PostgreSQL)
+
+    # Public Subnet 1 CIDR
+    PubSubnetCidr1:
+        Type: String
+        Default: 10.0.0.0/24
+        Description: This is the CIDR for public subnet 1
+
+    # Private Subnet 1 CIDR
+    PrivateSubnetCidr1:
+        Type: String
+        Default: 10.0.2.0/24
+        Description: This is the CIDR for private subnet 1
+
+    # Public Subnet 2 CIDR
+    PubSubnetCidr2:
+        Type: String
+        Default: 10.0.1.0/24
+        Description: This is the CIDR for public subnet 2
+
+    # Private Subnet 2 CIDR
+    PrivateSubnetCidr2:
+        Type: String
+        Default: 10.0.3.0/24
+        Description: This is the CIDR for private subnet 2
+
+Resources:
+    # Create VPC security group for RDS/Aurora PostgreSQL
+    RDSSecurityGroupCluster:
+        Type: AWS::EC2::SecurityGroup
+        Properties:
+            VpcId: !Ref RdsAuroraVPC
+            GroupName: !Sub ${TemplateName}-internal
+            GroupDescription: RDS cluster firewall
+            Tags:
+                - Key: Name
+                  Value: !Sub ${TemplateName}-rdsa-internal
+            SecurityGroupIngress:
+                - IpProtocol: tcp
+                  FromPort: !Ref RdsIngressPort
+                  ToPort: !Ref RdsIngressPort
+                  CidrIp: !Ref PubSubnetCidr1
+                  Description: Allows hosts in public subnet1 to connect with the cluster
+                - IpProtocol: tcp
+                  FromPort: !Ref RdsIngressPort
+                  ToPort: !Ref RdsIngressPort
+                  CidrIp: !Ref PubSubnetCidr2
+                  Description: Allows hosts in public subnet2 to connect with the cluster
+                - IpProtocol: tcp
+                  FromPort: !Ref RdsIngressPort
+                  ToPort: !Ref RdsIngressPort
+                  CidrIp: !Ref PrivateSubnetCidr1
+                  Description: Allows hosts in private subnet1 to connect with the cluster
+                - IpProtocol: tcp
+                  FromPort: !Ref RdsIngressPort
+                  ToPort: !Ref RdsIngressPort
+                  CidrIp: !Ref PrivateSubnetCidr2
+                  Description: Allows hosts in private subnet2 to connect with the cluster
+
+Outputs:
+    DBSecurityGroupCluster:
+        Description: This is the Security group to be used for the DB cluster
+        Value: !Ref RDSSecurityGroupCluster
+        Export:
+            Name: !Sub "${AWS::Region}-${AWS::StackName}-SecurityGroupDBCluster"
